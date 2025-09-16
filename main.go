@@ -179,7 +179,6 @@ func buildPrompt(input string) string {
 }
 
 func parseAIResponse(responseText string) (*AIResponse, error) {
-	// Try to extract JSON from the response
 	responseText = strings.TrimSpace(responseText)
 
 	// Find JSON boundaries
@@ -187,7 +186,7 @@ func parseAIResponse(responseText string) (*AIResponse, error) {
 	end := strings.LastIndex(responseText, "}")
 
 	if start == -1 || end == -1 {
-		return nil, errors.New("no JSON found in response")
+		return nil, fmt.Errorf("no JSON found in response: %s", responseText)
 	}
 
 	jsonStr := responseText[start : end+1]
@@ -195,7 +194,7 @@ func parseAIResponse(responseText string) (*AIResponse, error) {
 	var aiResponse AIResponse
 	err := json.Unmarshal([]byte(jsonStr), &aiResponse)
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse JSON response: %w; body: %s", err, jsonStr)
+		return nil, fmt.Errorf("failed to parse JSON response: %w; body: %s", err, responseText)
 	}
 
 	return &aiResponse, nil
