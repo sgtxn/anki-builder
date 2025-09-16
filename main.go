@@ -195,7 +195,7 @@ func parseAIResponse(responseText string) (*AIResponse, error) {
 	var aiResponse AIResponse
 	err := json.Unmarshal([]byte(jsonStr), &aiResponse)
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse JSON response: %w", err)
+		return nil, fmt.Errorf("failed to parse JSON response: %w; body: %s", err, jsonStr)
 	}
 
 	return &aiResponse, nil
