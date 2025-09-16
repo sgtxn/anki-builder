@@ -21,7 +21,7 @@ import (
 
 const shutdownTimeout = 5 * time.Second
 
-//go:embed prompt.md
+//go:embed prompt.txt
 var promptTemplate string
 
 type FinnishCard struct {
