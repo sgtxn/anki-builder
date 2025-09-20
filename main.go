@@ -13,6 +13,7 @@ import (
 	"strings"
 	"syscall"
 	"time"
+	"unicode/utf8"
 
 	"anki-builder/aislop/gemini"
 	"anki-builder/ankiclient"
@@ -89,6 +90,10 @@ loop:
 			}
 
 			input := strings.TrimSpace(scanner.Text())
+			if !utf8.ValidString(input) {
+				input = strings.ToValidUTF8(input, "")
+			}
+
 			dataChan <- input
 		}()
 
