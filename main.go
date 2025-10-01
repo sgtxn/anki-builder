@@ -207,7 +207,7 @@ func parseAIResponse(responseText string) (*AIResponse, error) {
 
 func addCardToAnki(ctx context.Context, client *ankiclient.AnkiConnectClient, deckname string, card *FinnishCard) error {
 	if !client.IsAvailable(ctx) {
-		return fmt.Errorf("AnkiConnect is not available at %s", client.BaseURL)
+		return fmt.Errorf("ankiConnect is not available at %s", client.BaseURL)
 	}
 
 	models, err := client.GetModelNames(ctx)
@@ -225,9 +225,7 @@ func addCardToAnki(ctx context.Context, client *ankiclient.AnkiConnectClient, de
 
 	fields, err := client.GetModelFieldNames(ctx, modelName)
 	if err != nil {
-		log.Printf("Warning: Could not get field names for model %s: %v", modelName, err)
-		// Fall back to Basic model fields
-		fields = []string{"Front", "Back"}
+		return fmt.Errorf("failed to get field names for model %s: %w", modelName, err)
 	}
 
 	fieldMap := make(map[string]string)

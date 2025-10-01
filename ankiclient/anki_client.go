@@ -139,6 +139,8 @@ func (a *AnkiConnectClient) GetModelFieldNames(ctx context.Context, modelName st
 }
 
 func (a *AnkiConnectClient) doRequest(ctx context.Context, request AnkiConnectRequest) (*AnkiConnectResponse, error) {
+	time.Sleep(time.Millisecond * 50) // slight delay to avoid AnkiConnect errors
+
 	jsonData, err := json.Marshal(request)
 	if err != nil {
 		return nil, fmt.Errorf("failed to marshal request: %w", err)
