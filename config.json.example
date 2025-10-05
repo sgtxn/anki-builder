@@ -1,5 +1,16 @@
 {
+    "languages": {
+        "Finnish": {
+            "deckName": "Finnish",
+            "modelName": "Finnish",
+            "promptFile": "finnish.txt"
+        },
+        "Japanese": {
+            "deckName": "Japanese::Words",
+            "modelName": "Japanese",
+            "promptFile": "japanese.txt"
+        }
+    },
     "geminiApiKey": "key_goes_here",
-    "ankiDeckName": "Finnish",
     "ankiConnectUrl": "http://localhost:8765"
 }
