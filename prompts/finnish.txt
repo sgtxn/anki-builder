@@ -24,7 +24,7 @@ Guidelines:
 - Create 3-4 example sentences at B1-B2 level, try to include examples for different meanings of the word/phrase
 - Don't add translations to the example sensences
 - Try to use the word/phrase in different grammatical cases in different example sentences (if applicable)
-- Make examples natural and contextually rich
+- Make examples natural and contextually rich, and double check that they are grammatically correct - you often seem to make mistakes here
 - For etymology, synonyms, grammatical notes, and usage tips in the notes section - don't add obvious information, keep it concise. If there's nothing to add - omit this section
 - Use lowercase for notes
 - Keep the prefixes of the notes consistent (e.g. always use "synonyms:", "etymology:", "extra:")
