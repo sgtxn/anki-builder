@@ -16,6 +16,7 @@ var pathList = []string{
 type Config struct {
 	LanguageSettings map[string]LanguageConfig `json:"languages"`
 	GeminiAPIKey     string                    `json:"geminiApiKey"`
+	GeminiModels     []string                  `json:"geminiModels"`
 	AnkiConnectURL   string                    `json:"ankiConnectUrl"`
 }
 
@@ -82,6 +83,10 @@ func validateConfig(cfg *Config) error {
 
 	if cfg.GeminiAPIKey == "" {
 		return errors.New("gemini api key config value is required")
+	}
+
+	if len(cfg.GeminiModels) == 0 {
+		return errors.New("at least one gemini model must be specified in config file")
 	}
 
 	return nil

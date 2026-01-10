@@ -13,14 +13,14 @@ import (
 const ankiRequestTimeout = 5 * time.Second
 
 type AnkiConnectRequest struct {
-	Action  string                 `json:"action"`
-	Version int                    `json:"version"`
-	Params  map[string]interface{} `json:"params"`
+	Action  string         `json:"action"`
+	Version int            `json:"version"`
+	Params  map[string]any `json:"params"`
 }
 
 type AnkiConnectResponse struct {
-	Result interface{} `json:"result"`
-	Error  interface{} `json:"error"`
+	Result any `json:"result"`
+	Error  any `json:"error"`
 }
 
 type AnkiConnectClient struct {
@@ -37,7 +37,7 @@ func (a *AnkiConnectClient) IsAvailable(ctx context.Context) bool {
 	request := AnkiConnectRequest{
 		Action:  "version",
 		Version: 6,
-		Params:  map[string]interface{}{},
+		Params:  map[string]any{},
 	}
 
 	_, err := a.doRequest(ctx, request)
@@ -45,7 +45,7 @@ func (a *AnkiConnectClient) IsAvailable(ctx context.Context) bool {
 }
 
 func (a *AnkiConnectClient) AddNote(ctx context.Context, deckName, modelName string, fields map[string]string, tags []string) error {
-	note := map[string]interface{}{
+	note := map[string]any{
 		"deckName":  deckName,
 		"modelName": modelName,
 		"fields":    fields,
@@ -55,7 +55,7 @@ func (a *AnkiConnectClient) AddNote(ctx context.Context, deckName, modelName str
 	request := AnkiConnectRequest{
 		Action:  "addNote",
 		Version: 6,
-		Params: map[string]interface{}{
+		Params: map[string]any{
 			"note": note,
 		},
 	}
@@ -68,7 +68,7 @@ func (a *AnkiConnectClient) GetDeckNames(ctx context.Context) ([]string, error) 
 	request := AnkiConnectRequest{
 		Action:  "deckNames",
 		Version: 6,
-		Params:  map[string]interface{}{},
+		Params:  map[string]any{},
 	}
 
 	response, err := a.doRequest(ctx, request)
@@ -77,7 +77,7 @@ func (a *AnkiConnectClient) GetDeckNames(ctx context.Context) ([]string, error) 
 	}
 
 	var decks []string
-	if result, ok := response.Result.([]interface{}); ok {
+	if result, ok := response.Result.([]any); ok {
 		for _, deck := range result {
 			if deckName, ok2 := deck.(string); ok2 {
 				decks = append(decks, deckName)
@@ -92,7 +92,7 @@ func (a *AnkiConnectClient) GetModelNames(ctx context.Context) ([]string, error)
 	request := AnkiConnectRequest{
 		Action:  "modelNames",
 		Version: 6,
-		Params:  map[string]interface{}{},
+		Params:  map[string]any{},
 	}
 
 	response, err := a.doRequest(ctx, request)
@@ -101,7 +101,7 @@ func (a *AnkiConnectClient) GetModelNames(ctx context.Context) ([]string, error)
 	}
 
 	var models []string
-	if result, ok := response.Result.([]interface{}); ok {
+	if result, ok := response.Result.([]any); ok {
 		for _, model := range result {
 			if modelName, ok2 := model.(string); ok2 {
 				models = append(models, modelName)
@@ -116,7 +116,7 @@ func (a *AnkiConnectClient) GetModelFieldNames(ctx context.Context, modelName st
 	request := AnkiConnectRequest{
 		Action:  "modelFieldNames",
 		Version: 6,
-		Params: map[string]interface{}{
+		Params: map[string]any{
 			"modelName": modelName,
 		},
 	}
@@ -127,7 +127,7 @@ func (a *AnkiConnectClient) GetModelFieldNames(ctx context.Context, modelName st
 	}
 
 	var fields []string
-	if result, ok := response.Result.([]interface{}); ok {
+	if result, ok := response.Result.([]any); ok {
 		for _, field := range result {
 			if fieldName, ok2 := field.(string); ok2 {
 				fields = append(fields, fieldName)

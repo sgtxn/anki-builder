@@ -17,33 +17,33 @@ const aiRequestTimeout = 30 * time.Second
 
 const geminiBaseURL = "https://generativelanguage.googleapis.com/v1beta/models"
 
-const (
-	geminiDefaultModel  = "gemini-3-flash-preview"
-	geminiFallbackModel = "gemini-2.5-flash-lite"
-)
-
 type Client struct {
 	apiKey string
+	models []string
 }
 
-func NewClient(apiKey string) *Client {
+func NewClient(apiKey string, models []string) *Client {
 	return &Client{
 		apiKey: apiKey,
+		models: models,
 	}
 }
 
 func (g *Client) GenerateContent(ctx context.Context, prompt string) (string, error) {
-	result, initialErr := g.doRequest(ctx, geminiDefaultModel, prompt)
-	if initialErr != nil {
-		log.Printf("Request with model '%s' failed: %v.\nRetrying with fallback model '%s'", geminiDefaultModel, initialErr, geminiFallbackModel)
-		var err error
-		result, err = g.doRequest(ctx, geminiFallbackModel, prompt)
-		if err != nil {
-			return "", fmt.Errorf("both Gemini model requests failed; initial error: %w; fallback error: %w", initialErr, err)
+	for i, model := range g.models {
+		if i > 0 {
+			log.Printf("Retrying with model '%s'...", model)
 		}
+
+		result, err := g.doRequest(ctx, model, prompt)
+		if err != nil {
+			log.Printf("Request with model '%s' failed: %v", model, err)
+			continue
+		}
+		return result, nil
 	}
 
-	return result, nil
+	return "", errors.New("all models failed to generate content")
 }
 
 func (g *Client) doRequest(ctx context.Context, model string, prompt string) (string, error) {

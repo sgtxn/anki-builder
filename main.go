@@ -166,14 +166,15 @@ func generateCard(ctx context.Context, cfg *config.Config, queryTmpl, input stri
 		return nil, fmt.Errorf("failed to query AI provider: %w", err)
 	}
 
-	var translations string
+	var translationsBuilder strings.Builder
 	for i, tl := range aiResponse.Translations {
 		tl = "- " + strings.ToLower(tl)
 		if i > 0 {
-			translations += "<br>"
+			translationsBuilder.WriteString("<br>")
 		}
-		translations += tl
+		translationsBuilder.WriteString(tl)
 	}
+	translations := translationsBuilder.String()
 
 	card := &AnkiCard{
 		Question:    aiResponse.Phrase,
@@ -186,7 +187,7 @@ func generateCard(ctx context.Context, cfg *config.Config, queryTmpl, input stri
 }
 
 func generateWithGemini(ctx context.Context, cfg *config.Config, queryTmpl, input string) (*AIResponse, error) {
-	client := gemini.NewClient(cfg.GeminiAPIKey)
+	client := gemini.NewClient(cfg.GeminiAPIKey, cfg.GeminiModels)
 	prompt := buildPrompt(queryTmpl, input)
 
 	responseText, err := client.GenerateContent(ctx, prompt)
