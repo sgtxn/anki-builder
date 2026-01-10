@@ -18,7 +18,7 @@ const aiRequestTimeout = 30 * time.Second
 const geminiBaseURL = "https://generativelanguage.googleapis.com/v1beta/models"
 
 const (
-	geminiDefaultModel  = "gemini-2.5-flash"
+	geminiDefaultModel  = "gemini-3-flash-preview"
 	geminiFallbackModel = "gemini-2.5-flash-lite"
 )
 
