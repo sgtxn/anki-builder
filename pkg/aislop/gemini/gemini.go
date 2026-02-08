@@ -13,16 +13,28 @@ import (
 	"time"
 )
 
-const aiRequestTimeout = 30 * time.Second
+const (
+	aiRequestTimeout = 30 * time.Second
+	geminiBaseURL    = "https://generativelanguage.googleapis.com/v1beta/models"
+)
 
-const geminiBaseURL = "https://generativelanguage.googleapis.com/v1beta/models"
+var errRateLimitReached = errors.New("rate limit reached")
 
 type Client struct {
 	apiKey string
-	models []string
+	models []model
 }
 
-func NewClient(apiKey string, models []string) *Client {
+type model struct {
+	Name   string
+	CanUse bool
+}
+
+func New(apiKey string, modelNames []string) *Client {
+	models := make([]model, 0, len(modelNames))
+	for _, name := range modelNames {
+		models = append(models, model{Name: name, CanUse: true})
+	}
 	return &Client{
 		apiKey: apiKey,
 		models: models,
@@ -30,16 +42,30 @@ func NewClient(apiKey string, models []string) *Client {
 }
 
 func (g *Client) GenerateContent(ctx context.Context, prompt string) (string, error) {
-	for i, model := range g.models {
-		if i > 0 {
-			log.Printf("Retrying with model '%s'...", model)
-		}
+	var previousModelFailed bool
 
-		result, err := g.doRequest(ctx, model, prompt)
-		if err != nil {
-			log.Printf("Request with model '%s' failed: %v", model, err)
+	for i, model := range g.models {
+		if !model.CanUse {
 			continue
 		}
+
+		if previousModelFailed {
+			log.Printf("Retrying with model '%s'...", model.Name)
+		}
+
+		result, err := g.doRequest(ctx, model.Name, prompt)
+		if err != nil {
+			if errors.Is(err, errRateLimitReached) {
+				log.Printf("Model '%s' has reached rate limit for today, marking as unusable", model.Name)
+				g.models[i].CanUse = false
+				continue
+			}
+
+			previousModelFailed = true
+			log.Printf("Request with model '%s' failed: %v", model.Name, err)
+			continue
+		}
+
 		return result, nil
 	}
 
@@ -90,6 +116,9 @@ func (g *Client) doRequest(ctx context.Context, model string, prompt string) (st
 	}
 
 	if resp.StatusCode != http.StatusOK {
+		if resp.StatusCode == http.StatusTooManyRequests {
+			return "", errRateLimitReached
+		}
 		return "", fmt.Errorf("API request failed with status %d and body %s", resp.StatusCode, respBody)
 	}
 

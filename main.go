@@ -62,7 +62,7 @@ func run() error {
 		return fmt.Errorf("error loading config: %w", err)
 	}
 
-	ankiClient := ankiclient.NewAnkiConnectClient(cfg.AnkiConnectURL)
+	ankiClient := ankiclient.New(cfg.AnkiConnectURL)
 	if !ankiClient.IsAvailable(ctx) {
 		return fmt.Errorf("AnkiConnect is not available at %s", ankiClient.BaseURL)
 	}
@@ -187,7 +187,7 @@ func generateCard(ctx context.Context, cfg *config.Config, queryTmpl, input stri
 }
 
 func generateWithGemini(ctx context.Context, cfg *config.Config, queryTmpl, input string) (*AIResponse, error) {
-	client := gemini.NewClient(cfg.GeminiAPIKey, cfg.GeminiModels)
+	client := gemini.New(cfg.GeminiAPIKey, cfg.GeminiModels)
 	prompt := buildPrompt(queryTmpl, input)
 
 	responseText, err := client.GenerateContent(ctx, prompt)

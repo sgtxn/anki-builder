@@ -27,7 +27,7 @@ type AnkiConnectClient struct {
 	BaseURL string
 }
 
-func NewAnkiConnectClient(baseURL string) *AnkiConnectClient {
+func New(baseURL string) *AnkiConnectClient {
 	return &AnkiConnectClient{
 		BaseURL: baseURL,
 	}
