@@ -67,6 +67,8 @@ func run() error {
 		return fmt.Errorf("AnkiConnect is not available at %s", ankiClient.BaseURL)
 	}
 
+	geminiClient := gemini.New(cfg.GeminiAPIKey, cfg.GeminiModels)
+
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, os.Interrupt, syscall.SIGTERM)
 
@@ -134,7 +136,7 @@ loop:
 
 		log.Printf("Processing: %s", input)
 
-		card, err := generateCard(ctx, cfg, queryTmpl, input)
+		card, err := generateCard(ctx, geminiClient, queryTmpl, input)
 		if err != nil {
 			if errors.Is(err, context.Canceled) {
 				return errors.New("operation cancelled, shutting down")
@@ -160,8 +162,8 @@ loop:
 	return nil
 }
 
-func generateCard(ctx context.Context, cfg *config.Config, queryTmpl, input string) (*AnkiCard, error) {
-	aiResponse, err := generateWithGemini(ctx, cfg, queryTmpl, input)
+func generateCard(ctx context.Context, geminiClient *gemini.Client, queryTmpl, input string) (*AnkiCard, error) {
+	aiResponse, err := generateWithGemini(ctx, geminiClient, queryTmpl, input)
 	if err != nil {
 		return nil, fmt.Errorf("failed to query AI provider: %w", err)
 	}
@@ -186,11 +188,10 @@ func generateCard(ctx context.Context, cfg *config.Config, queryTmpl, input stri
 	return card, nil
 }
 
-func generateWithGemini(ctx context.Context, cfg *config.Config, queryTmpl, input string) (*AIResponse, error) {
-	client := gemini.New(cfg.GeminiAPIKey, cfg.GeminiModels)
+func generateWithGemini(ctx context.Context, geminiClient *gemini.Client, queryTmpl, input string) (*AIResponse, error) {
 	prompt := buildPrompt(queryTmpl, input)
 
-	responseText, err := client.GenerateContent(ctx, prompt)
+	responseText, err := geminiClient.GenerateContent(ctx, prompt)
 	if err != nil {
 		return nil, fmt.Errorf("failed to generate content with Gemini: %w", err)
 	}

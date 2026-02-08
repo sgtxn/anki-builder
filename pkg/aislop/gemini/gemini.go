@@ -46,11 +46,14 @@ func (g *Client) GenerateContent(ctx context.Context, prompt string) (string, er
 
 	for i, model := range g.models {
 		if !model.CanUse {
+			log.Printf("Skipping model '%s'...", model.Name)
 			continue
 		}
 
 		if previousModelFailed {
 			log.Printf("Retrying with model '%s'...", model.Name)
+		} else {
+			log.Printf("Using model '%s' to generate content...", model.Name)
 		}
 
 		result, err := g.doRequest(ctx, model.Name, prompt)
