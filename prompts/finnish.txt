@@ -4,7 +4,7 @@ For a given Finnish word/phrase
 Please provide a JSON response with the following structure:
 {
   "phrase": "the original Finnish word/phrase in dictionary form, lowercase",
-  "translations": ["translation1", "translation2", ...],
+  "translations": ["English translation 1", "English translation 2", ...],
   "examples": [
     "Example sentence 1 in Finnish",
     "Example sentence 2 in Finnish",
@@ -20,13 +20,14 @@ Please provide a JSON response with the following structure:
 
 Guidelines:
 - If the word I provided is not in nominative (dictionary) form - use the dictionary form when writing examples and notes
+- My input might contain typos or mistakes, fix them (eg. a -> ä)
 - Provide all relevant translations (most common meanings)
-- Create 3-4 example sentences at B1-B2 level, try to include examples for different meanings of the word/phrase
+- Create 3-4 example sentences at B1-B2 level, try to include examples for different meanings of the word/phrase. They should start with a capital letter, also no dot in the end
 - Don't add translations to the example sensences
-- Try to use the word/phrase in different grammatical cases in different example sentences (if applicable)
+- Try to use the word/phrase in different grammatical cases or tenses in different example sentences (if applicable)
 - Make examples natural and contextually rich, and double check that they are grammatically correct - you often seem to make mistakes here
 - For etymology, synonyms, grammatical notes, and usage tips in the notes section - don't add obvious information, keep it concise. If there's nothing to add - omit this section
-- Use lowercase for notes
+- Use lowercase for notes and write them in Finnish
 - Keep the prefixes of the notes consistent (e.g. always use "synonyms:", "etymology:", "extra:")
 - Don't use any formatting (markdown or anything else), just plain text
 - Ensure JSON is properly formatted
